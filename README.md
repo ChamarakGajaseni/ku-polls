@@ -20,4 +20,4 @@ All project documents are in the [Project Wiki](../../wiki/Home).
 - [Development Plan](../../wiki/Development-Plan)
 - [Iteration 1 Plan](../../wiki/Iteration-1-Plan)
 
-[django-tutorial](https://docs.djangoproject.com/en/4.1/intro/tutorial01/)
+Documentaion for django [django-tutorial](https://docs.djangoproject.com/en/4.1/intro/tutorial01/)
