@@ -1,14 +1,12 @@
 from django.shortcuts import render
 from .models import Question
-from django.http import HttpResponse
-from django.template import loader
-from django.http import Http404
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from .models import Choice, Question
 from django.views import generic
 from django.utils import timezone
+from django.contrib import messages
 
 class IndexView(generic.ListView):
     template_name = 'polls/index.html'
@@ -47,6 +45,21 @@ class DetailView(generic.DetailView):
         Excludes any questions that aren't published yet.
         """
         return Question.objects.filter(pub_date__lte=timezone.now())
+
+    def get(self, request, *args, **kwargs):
+        """
+        This will redirect to home page when,
+        1. Question is not published.
+        2. Vote is closed.
+        """
+        question = self.get_object()
+        if not question.is_published():
+            messages.error(request, "Question is not published yet.")
+            return redirect("polls:index")  
+        if not question.can_vote():
+            messages.error(request, "This vote is closed.")
+            return redirect("polls:index")
+        return super().get(request, *args, **kwargs)
 
 class ResultsView(generic.DetailView):
     model = Question

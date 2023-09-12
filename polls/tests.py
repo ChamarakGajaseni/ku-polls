@@ -34,6 +34,22 @@ class QuestionModelTests(TestCase):
         time = timezone.now() - datetime.timedelta(hours=23, minutes=59, seconds=59)
         recent_question = Question(pub_date=time)
         self.assertIs(recent_question.was_published_recently(), True)
+
+    def test_cannot_vote_after_end_date(self):
+        """Cannot vote if the end_date is in the past."""
+
+    def test_is_published_with_future_pub_date(self):
+        """ 
+        test of is_published() is False if a question published date is in future
+        """
+        time = timezone.now() + datetime.timedelta(days=30)
+
+    def test_is_published_with_default_pub_date(self):
+        pass
+
+    def test_is_published_with_past_pub_date(self):
+        pass
+
     
 def create_question(question_text, days):
     """
