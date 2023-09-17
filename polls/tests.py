@@ -35,22 +35,55 @@ class QuestionModelTests(TestCase):
         recent_question = Question(pub_date=time)
         self.assertIs(recent_question.was_published_recently(), True)
 
-    def test_cannot_vote_after_end_date(self):
-        """Cannot vote if the end_date is in the past."""
-
     def test_is_published_with_future_pub_date(self):
         """ 
-        test of is_published() is False if a question published date is in future
+        test of is_published() is False if a question pub_date is in future
         """
-        time = timezone.now() + datetime.timedelta(days=30)
+        time = timezone.now() + datetime.timedelta(days=14)
+        future_question = Question(pub_date=time)
+        self.assertIs(future_question.is_published(), False)
 
     def test_is_published_with_default_pub_date(self):
-        pass
+        """
+        test of is_published() is True if a question pub_date is Now
+        """
+        time = timezone.now()
+        question = Question(pub_date=time)
+        self.assertIs(question.is_published(), True)
 
     def test_is_published_with_past_pub_date(self):
-        pass
+        """
+        test of is_published() is True if a question pub_date is in Past
+        """
+        time = timezone.now() - datetime.timedelta(days=1,seconds=1)
+        past_question = Question(pub_date=time)
+        self.assertIs(past_question.is_published(), True)
 
-    
+    def test_cannot_vote_after_end_date(self):
+        """Cannot vote if the end_date is in the past."""
+        end_time = timezone.now() - datetime.timedelta(days=1)
+        pub_time = timezone.now() - datetime.timedelta(days=10)
+        past_question = Question(pub_date= pub_time , end_date=end_time)
+        self.assertIs(past_question.can_vote(), False)
+
+    def test_can_vote_within_end_date(self):
+        """Can vote if current time is within end_date."""
+        end_time = timezone.now()
+        pub_time = timezone.now() - datetime.timedelta(days=10)
+        past_question = Question(pub_date= pub_time , end_date=end_time)
+        self.assertIs(past_question.can_vote(), True)
+    def test_can_vote_before_end_date(self):
+        """Cannot vote if the end_date is in the future."""
+        end_time = timezone.now() + datetime.timedelta(days=10)
+        pub_time = timezone.now() - datetime.timedelta(days=10)
+        past_question = Question(pub_date= pub_time , end_date=end_time)
+        self.assertIs(past_question.can_vote(), True)
+    def test_cannot_vote_before_published(self):
+        """Cannot vote if the pub_date is in the future."""
+        end_time = timezone.now() + datetime.timedelta(days=10)
+        pub_time = timezone.now() + datetime.timedelta(days=7)
+        past_question = Question(pub_date= pub_time , end_date=end_time)
+        self.assertIs(past_question.can_vote(), False)
 def create_question(question_text, days):
     """
     Create a question with the given `question_text` and published the
@@ -117,6 +150,7 @@ class QuestionIndexViewTests(TestCase):
             response.context['latest_question_list'],
             [question2, question1],
         )
+
 
 class QuestionDetailViewTests(TestCase):
     def test_future_question(self):

@@ -1,5 +1,3 @@
-from django.shortcuts import render
-from .models import Question
 from django.shortcuts import get_object_or_404, render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
@@ -7,7 +5,6 @@ from .models import Choice, Question
 from django.views import generic
 from django.utils import timezone
 from django.contrib import messages
-
 class IndexView(generic.ListView):
     template_name = 'polls/index.html'
     context_object_name = 'latest_question_list'
@@ -40,24 +37,21 @@ def vote(request, question_id):
 class DetailView(generic.DetailView):
     model = Question
     template_name = 'polls/detail.html'
-    def get_queryset(self):
-        """
-        Excludes any questions that aren't published yet.
-        """
-        return Question.objects.filter(pub_date__lte=timezone.now())
+    # def get_queryset(self):
+    #     """
+    #     Excludes any questions that aren't published yet.
+    #     """
+    #     return Question.objects.filter(pub_date__lte=timezone.now())
 
     def get(self, request, *args, **kwargs):
         """
-        This will redirect to home page when,
-        1. Question is not published.
-        2. Vote is closed.
+        This will redirect to home page
+        when the question is not published
+        or beyond an end date of question voting
         """
         question = self.get_object()
-        if not question.is_published():
-            messages.error(request, "Question is not published yet.")
-            return redirect("polls:index")  
-        if not question.can_vote():
-            messages.error(request, "This vote is closed.")
+        if not question.can_vote() or not question.is_published():
+            messages.error(request, "That question voting is not allow for now.")
             return redirect("polls:index")
         return super().get(request, *args, **kwargs)
 

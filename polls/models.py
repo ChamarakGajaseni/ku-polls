@@ -15,14 +15,14 @@ class Question(models.Model):
         return now - datetime.timedelta(days=1) <= self.pub_date <= now
     
     def is_published(self):
-        return timezone.now() >= self.pub_date
+        return timezone.localtime() >= self.pub_date
 
     def can_vote(self):
         if self.end_date == None:
-            return  self.pub_date <= timezone.now()
+            return  self.pub_date <= timezone.localtime()
         
         else:
-            return  self.pub_date <= timezone.now() <= self.end_date
+            return  self.pub_date <= timezone.localtime() <= self.end_date
 
 
 class Choice(models.Model):
