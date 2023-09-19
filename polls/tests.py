@@ -68,9 +68,9 @@ class QuestionModelTests(TestCase):
 
     def test_can_vote_within_end_date(self):
         """Can vote if current time is within end_date."""
-        end_time = timezone.now()
+        end_time = timezone.now() + datetime.timedelta(days=1)
         pub_time = timezone.now() - datetime.timedelta(days=10)
-        past_question = Question(pub_date= pub_time , end_date=end_time)
+        past_question = Question(pub_date=pub_time , end_date=end_time)
         self.assertIs(past_question.can_vote(), True)
     def test_can_vote_before_end_date(self):
         """Can vote if the end_date is in the future."""
