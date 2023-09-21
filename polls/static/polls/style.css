@@ -11,8 +11,8 @@ a {
 }
 
 .question {
-    height: 80px;
-    width: 500px;
+    height: 200px;
+    width: 220px;
     background-color: rgb(161, 194, 130);
     border-radius: 20px;
 }
@@ -40,3 +40,4 @@ table {
     margin-top: 50px;
     margin-bottom: 50px;     */
 }
+
